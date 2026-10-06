@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linear Algebra 3 post read</title>
+<style>
+:root{
+  --green-900:#0B3D2E; --green-800:#145C45; --green-700:#1F7A5C;
+  --pink:#F2A6C6; --pink-dark:#DD6FA0; --pink-light:#FCE7F0;
+  --gray-700:#2E3B36; --gray-500:#5C6B65; --gray-300:#C9D6D0;
+  --gray-200:#E3ECE8; --gray-100:#F1F6F3; --gray-50:#FAFBFA; --white:#FFFFFF;
+  --radius:14px; --shadow:0 4px 20px rgba(11,61,46,0.08); --shadow-lg:0 10px 40px rgba(11,61,46,0.14); --maxw:860px;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; color:var(--gray-700); background:var(--gray-50); line-height:1.65;}
+h1,h2,h3,h4{font-weight:800; letter-spacing:-0.01em; color:var(--green-900);}
+a{color:var(--pink-dark);}
+img{max-width:100%;}
+.hero{position:relative; background:linear-gradient(160deg,var(--green-900) 0%,var(--green-800) 60%,#0A2E22 100%); color:var(--white); padding:88px 24px 150px; overflow:hidden; text-align:center;}
+.hero::before{content:""; position:absolute; top:-120px; right:-120px; width:420px; height:420px; background:radial-gradient(circle,rgba(242,166,198,0.5),transparent 70%); filter:blur(10px);}
+.hero::after{content:""; position:absolute; bottom:-160px; left:-100px; width:380px; height:380px; background:radial-gradient(circle,rgba(242,166,198,0.22),transparent 70%);}
+.eyebrow{display:inline-block; font-size:12.5px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--pink); background:rgba(242,166,198,0.14); border:1px solid rgba(242,166,198,0.45); padding:6px 14px; border-radius:999px; margin-bottom:22px; position:relative; z-index:2;}
+.hero h1{font-size:clamp(32px,5vw,52px); margin:0 0 16px; color:var(--white); position:relative; z-index:2;}
+.hero p.sub{max-width:620px; margin:0 auto; font-size:18px; color:var(--gray-300); position:relative; z-index:2;}
+.toc{max-width:var(--maxw); margin:-96px auto 56px; background:var(--white); border-radius:var(--radius); box-shadow:var(--shadow-lg); padding:28px 32px; position:relative; z-index:3; border:1px solid var(--gray-200);}
+.toc h3{font-size:13px; text-transform:uppercase; letter-spacing:0.1em; color:var(--pink-dark); margin:0 0 14px;}
+.toc ol{margin:0; padding:0; list-style:none; display:grid; grid-template-columns:1fr 1fr; gap:8px 28px;}
+.toc li a{display:block; text-decoration:none; color:var(--gray-700); font-size:15px; font-weight:600; padding:6px 0; border-bottom:1px dashed var(--gray-200);}
+.toc li a:hover{color:var(--pink-dark);}
+.wrap{max-width:var(--maxw); margin:0 auto; padding:0 24px;}
+section.block{padding:52px 0; border-bottom:1px solid var(--gray-200);}
+section.block:last-of-type{border-bottom:none;}
+section.block h2{font-size:28px; margin:0 0 22px; display:inline-block; border-bottom:4px solid var(--pink); padding-bottom:8px;}
+section.block h3{font-size:19px; margin:30px 0 12px; color:var(--green-800);}
+section.block p{font-size:16.5px; color:var(--gray-700); margin:0 0 16px;}
+.card{background:var(--white); border:1px solid var(--gray-200); border-radius:var(--radius); padding:22px 24px; box-shadow:var(--shadow); margin:20px 0;}
+.callout{border-left:4px solid var(--pink); background:var(--pink-light); padding:16px 20px; border-radius:0 10px 10px 0; margin:20px 0; font-size:15.5px; color:var(--green-900);}
+.insight{background:var(--green-900); color:var(--white); border-radius:var(--radius); padding:22px 26px; margin:24px 0; position:relative;}
+.insight::before{content:"KEY INSIGHT"; display:block; font-size:11.5px; letter-spacing:0.12em; color:var(--pink); font-weight:800; margin-bottom:8px;}
+.formula-block{background:var(--green-900); color:var(--pink-light); border-radius:12px; padding:20px 26px; margin:20px 0; font-size:18px; text-align:center; font-style:italic; font-family:"Georgia",serif; letter-spacing:0.02em; overflow-x:auto;}
+table{width:100%; border-collapse:collapse; margin:18px 0; font-size:15px;}
+th,td{padding:10px 14px; border:1px solid var(--gray-200); text-align:left;}
+th{background:var(--gray-100); font-weight:700; color:var(--green-900);}
+tr:nth-child(even) td{background:var(--gray-50);}
+.accordion{margin:20px 0;}
+.acc-item{border:1px solid var(--gray-200); border-radius:10px; margin-bottom:10px; overflow:hidden; background:var(--white);}
+.acc-head{display:flex; justify-content:space-between; align-items:center; cursor:pointer; padding:16px 20px; font-weight:700; color:var(--green-900); background:var(--white);}
+.acc-head:hover{background:var(--gray-50);}
+.acc-head .plus{color:var(--pink-dark); font-size:20px; transition:transform .25s;}
+.acc-item.open .plus{transform:rotate(45deg);}
+.acc-body{max-height:0; overflow:hidden; transition:max-height .3s ease; padding:0 20px;}
+.acc-body-inner{padding:4px 0 18px; font-size:15.5px; color:var(--gray-700);}
+.acc-head:focus-visible, .tab-btn:focus-visible, button:focus-visible, input:focus-visible{outline:3px solid var(--pink-dark); outline-offset:2px;}
+.sim-box{background:var(--white); border:1px solid var(--gray-200); border-radius:var(--radius); padding:24px; box-shadow:var(--shadow); margin:22px 0;}
+.sim-controls{display:flex; flex-wrap:wrap; gap:22px; align-items:center; margin-bottom:16px;}
+.sim-controls label{font-size:14px; font-weight:700; color:var(--green-900); display:flex; flex-direction:column; gap:6px;}
+input[type=range]{width:220px; accent-color:var(--pink-dark);}
+.pill{display:inline-block; background:var(--pink-dark); color:var(--white); font-weight:800; padding:4px 12px; border-radius:999px; font-size:13.5px;}
+.sim-result{font-size:15.5px; color:var(--green-900); background:var(--gray-50); border-radius:10px; padding:14px 18px;}
+.verdict-good{color:#1f8a4c; font-weight:800;}
+.verdict-bad{color:#C4350B; font-weight:800;}
+.two-col{display:grid; grid-template-columns:1fr 1fr; gap:22px;}
+@media (max-width:720px){.two-col{grid-template-columns:1fr;} .toc ol{grid-template-columns:1fr;}}
+.svg-wrap{width:100%; max-width:520px; margin:0 auto; display:block;}
+.caption{font-size:13px; color:var(--gray-500); text-align:center; margin-top:8px;}
+.grid-cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; margin:20px 0;}
+.mini-card{background:var(--white); border:1px solid var(--gray-200); border-radius:12px; padding:16px 18px; box-shadow:var(--shadow);}
+.mini-card h4{margin:0 0 8px; font-size:15px; color:var(--pink-dark);}
+.mini-card p{font-size:14px; margin:0; color:var(--gray-700);}
+.btn{background:var(--pink-dark); color:var(--white); border:none; padding:9px 18px; border-radius:8px; font-weight:700; font-size:14px; cursor:pointer;}
+.btn:hover{background:#C25A8C;}
+footer{background:var(--green-900); color:var(--gray-300); text-align:center; padding:40px 24px; font-size:14px;}
+footer .title{color:var(--white); font-weight:800; font-size:16px; margin-bottom:6px;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <span class="eyebrow">Linear Algebra Series · Part 3</span>
+  <h1>Linear Algebra 3 post read</h1>
+  <p class="sub">Halfspaces and distance — shifting lines, proving the weight vector is always perpendicular to its hyperplane, and measuring exactly how far a point sits from a decision boundary.</p>
+</div>
+
+<nav class="toc">
+  <h3>On this page</h3>
+  <ol>
+    <li><a href="#shift">Shifting 2D lines</a></li>
+    <li><a href="#perp">Proof: w is perpendicular to the line</a></li>
+    <li><a href="#origin">Distance from the origin to a line</a></li>
+    <li><a href="#point">Distance from a point to a line</a></li>
+    <li><a href="#half">Halfspaces</a></li>
+  </ol>
+</nav>
+
+<div class="wrap">
+
+<section class="block" id="shift">
+  <h2>Shifting 2D lines</h2>
+  <p>Take a line through the origin, <code>w₁x₁ + w₂x₂ + w₀ = 0</code>. Shifting the line right by <strong>a</strong> units is the same as shifting the <strong>origin</strong> left by a units — the origin always moves in the <em>opposite</em> direction to the line's shift.</p>
+  <div class="grid-cards">
+    <div class="mini-card"><h4>Shift right / up</h4><p>Replace x₁ with (x₁ − a), or x₂ with (x₂ − a).</p></div>
+    <div class="mini-card"><h4>Shift left / down</h4><p>Replace x₁ with (x₁ + a), or x₂ with (x₂ + a).</p></div>
+  </div>
+  <p>To move a line so it passes through an arbitrary point (a, b) instead of the origin: <code>w₁(x₁ − a) + w₂(x₂ − b) + w₀ = 0</code>. Expanding this shows the constant term <code>−w₁a − w₂b + w₀</code> is just a new bias, w₀′ — shifting a line is really just updating the bias term.</p>
+
+  <div class="callout">A common mix-up: shifting a line <strong>right</strong> by a means replacing x₁ with <strong>(x₁ − a)</strong>, not (x₁ + a). The "+a" version is what shifts the line <strong>left</strong>. Thinking in terms of "the origin moves opposite to the line" avoids the confusion.</div>
+
+  <div class="sim-box">
+    <h3 style="margin-top:0;">Line-shift explorer</h3>
+    <p style="margin-bottom:14px; font-size:14.5px;">Shift the line <code>x₁ + x₂ = 0</code> right/left by a. Watch how the origin's position relative to the line moves the opposite way.</p>
+    <div class="sim-controls">
+      <label>Shift a: <span id="shiftLabel" class="pill">0</span><input type="range" id="shiftSlider" min="-50" max="50" value="0" step="1"></label>
+    </div>
+    <svg class="svg-wrap" id="shiftSvg" viewBox="0 0 440 320" role="img" aria-label="Line shifting right or left with the origin moving oppositely"></svg>
+    <div class="sim-result" id="shiftResult"></div>
+  </div>
+</section>
+
+<section class="block" id="perp">
+  <h2>Proof: the weight vector is always perpendicular to the line</h2>
+  <p>Draw the weight vector [w₁, w₂] from the origin, and call the point where it meets the line <strong>d</strong>. Since d lies on the line, <code>w₁d₁ + w₂d₂ + w₀ = 0</code>. Because d points in the same direction as w, <code>d̄ = k·ŵ</code> for some constant k — substituting back and solving gives k explicitly.</p>
+  <p>Next, define <strong>y</strong> as the vector to the line's y-intercept. Using vector addition, <code>ȷ̄ = d̄ + x̄</code>, so <code>x̄ = ȷ̄ − d̄</code> is the vector running along the line itself (from d to the y-intercept).</p>
+  <div class="formula-block">d̄ᵗ(ȷ̄ − d̄) = 0</div>
+  <div class="insight">Since the dot product of d (along w) and (y − d) (along the line) simplifies to exactly 0, the angle between them is 90°. That's the proof: <strong>the weight vector is always perpendicular to the line</strong>.</div>
+
+  <div class="sim-box">
+    <h3 style="margin-top:0;">Numeric check</h3>
+    <p style="margin-bottom:14px; font-size:14.5px;">For the line <code>2x₁ + x₂ − 4 = 0</code> (w = [2, 1], w₀ = −4), confirm d̄ᵗ(ȷ̄ − d̄) comes out to zero.</p>
+    <div class="sim-result" id="perpResult"></div>
+  </div>
+</section>
+
+<section class="block" id="origin">
+  <h2>Distance from the origin to a line</h2>
+  <p>Using the vector d defined above, the distance from the origin to the line is ‖d̄‖. Solving algebraically (or geometrically, via <code>cos θ = w̄ᵗx̄₀ / (‖w̄‖‖x̄₀‖)</code> for any point x₀ on the line) gives a clean closed form:</p>
+  <div class="formula-block">d = −w₀ / ‖w̄‖</div>
+  <div class="callout">The <strong>sign</strong> of this distance tells us which side of the line the origin sits on — it isn't an error or a quirk, it's informative.</div>
+</section>
+
+<section class="block" id="point">
+  <h2>Distance from a point to a line</h2>
+  <p>Shifting the origin to an arbitrary point x₀ turns this into the same problem as above: the vector d (from x₀, perpendicular to the line) is now the "local" weight vector for the shifted line. Working through the algebra (or the geometric proof via the two similar right triangles formed by x₀'s vector and the line) gives the general <strong>signed distance formula</strong>:</p>
+  <div class="formula-block">d = ( w̄ᵗx̄₀ + w₀ ) / ‖w̄‖</div>
+  <p>The coordinate-geometry route (substitute the point into the line equation, normalize by the line's coefficients) and the vector-algebra route compute exactly the same quantity.</p>
+
+  <div class="sim-box">
+    <h3 style="margin-top:0;">Signed distance &amp; halfspace calculator</h3>
+    <p style="margin-bottom:14px; font-size:14.5px;">For the line <code>x₁ − 5 = 0</code> (w = [1, 0], w₀ = −5), move the point and read its signed distance.</p>
+    <div class="sim-controls">
+      <label>Point x₁: <span id="px1Label" class="pill">6</span><input type="range" id="px1" min="0" max="12" value="6" step="1"></label>
+      <label>Point x₂: <span id="px2Label" class="pill">5</span><input type="range" id="px2" min="0" max="12" value="5" step="1"></label>
+    </div>
+    <svg class="svg-wrap" id="distSvg3" viewBox="0 0 440 320" role="img" aria-label="Point and line with signed distance and halfspace"></svg>
+    <div class="sim-result" id="distResult3"></div>
+  </div>
+</section>
+
+<section class="block" id="half">
+  <h2>Halfspaces</h2>
+  <p>A line divides 2D space into two parts. Using the weight vector as the reference direction:</p>
+  <div class="grid-cards">
+    <div class="mini-card"><h4>Positive halfspace</h4><p>Points on the same side the weight vector points toward.</p></div>
+    <div class="mini-card"><h4>Negative halfspace</h4><p>Points on the opposite side.</p></div>
+  </div>
+  <p>Verifying with the line <code>x = 5</code> (weight vector along the x-axis): the point (6, 5) gives <code>6 − 5 = 1</code> (positive, right of the line); the point (2, 3) gives <code>2 − 5 = −3</code> (negative, left of the line).</p>
+  <div class="insight">The sign of the signed-distance formula <strong>is</strong> the halfspace test — exactly the mechanism used to classify any new point going forward.</div>
+</section>
+
+</div>
+
+<footer>
+  <div class="title">Linear Algebra 3 post read</div>
+  Shifting lines · perpendicularity proof · distance · halfspaces
+</footer>
+
+<script>
+// Line shift explorer
+const shiftSlider=document.getElementById('shiftSlider'), shiftLabel=document.getElementById('shiftLabel');
+const shiftSvg=document.getElementById('shiftSvg'), shiftResult=document.getElementById('shiftResult');
+function sxS(x){ return 220+x*4; }
+function syS(y){ return 160-y*4; }
+function drawShift(){
+  const a=parseInt(shiftSlider.value);
+  shiftLabel.textContent=a;
+  let svg='';
+  svg+=`<line x1="0" y1="${syS(0)}" x2="440" y2="${syS(0)}" stroke="#C9D6D0" stroke-width="1"/>`;
+  svg+=`<line x1="${sxS(0)}" y1="0" x2="${sxS(0)}" y2="320" stroke="#C9D6D0" stroke-width="1"/>`;
+  // original line x1+x2=0 -> x2=-x1
+  svg+=`<line x1="${sxS(-40)}" y1="${syS(40)}" x2="${sxS(40)}" y2="${syS(-40)}" stroke="#C9D6D0" stroke-width="2" stroke-dasharray="5 5"/>`;
+  // shifted line: (x1-a)+x2=0 -> x2 = -(x1-a) = a-x1
+  svg+=`<line x1="${sxS(-40)}" y1="${syS(a+40)}" x2="${sxS(40)}" y2="${syS(a-40)}" stroke="#DD6FA0" stroke-width="3"/>`;
+  svg+=`<circle cx="${sxS(0)}" cy="${syS(0)}" r="6" fill="#0B3D2E"/>`;
+  svg+=`<text x="${sxS(0)+10}" y="${syS(0)-10}" font-size="13" font-weight="700" fill="#0B3D2E">origin</text>`;
+  shiftSvg.innerHTML=svg;
+  const dir = a>0?'right':(a<0?'left':'unshifted');
+  const origDir = a>0?'left':(a<0?'right':'unchanged');
+  shiftResult.innerHTML=`Line shifted <strong>${Math.abs(a)} units ${dir}</strong> → equation becomes (x₁−${a})+x₂=0 → relative to the line, the origin has effectively moved <strong>${origDir}</strong>.`;
+}
+shiftSlider.addEventListener('input',drawShift); drawShift();
+
+// Perpendicularity numeric check: line 2x1+x2-4=0, w=[2,1], w0=-4
+(function(){
+  const w1=2, w2=1, w0=-4;
+  // pick d along w direction satisfying line: w1*d1+w2*d2+w0=0, d=k*w/||w||
+  const normW = Math.sqrt(w1*w1+w2*w2);
+  const k = -w0 / ( (w1*w1+w2*w2)/normW );
+  const d1 = k*w1/normW, d2 = k*w2/normW;
+  const yInt = -w0/w2; // y-intercept point (0, yInt)
+  const y1=0, y2=yInt;
+  const diffx = y1-d1, diffy = y2-d2;
+  const dot = d1*diffx + d2*diffy;
+  document.getElementById('perpResult').innerHTML = `d̄ = [${d1.toFixed(3)}, ${d2.toFixed(3)}] &nbsp;·&nbsp; ȷ̄ = [0, ${yInt.toFixed(3)}] &nbsp;·&nbsp; d̄ᵗ(ȷ̄−d̄) = <strong>${dot.toFixed(6)}</strong> ≈ 0 — confirmed perpendicular.`;
+})();
+
+// Signed distance & halfspace
+const px1=document.getElementById('px1'), px2=document.getElementById('px2');
+const px1L=document.getElementById('px1Label'), px2L=document.getElementById('px2Label');
+const distSvg3=document.getElementById('distSvg3'), distResult3=document.getElementById('distResult3');
+function sxD3(x){ return 20+x*32; }
+function syD3(y){ return 300-y*22; }
+function drawDist3(){
+  const x1=parseInt(px1.value), x2=parseInt(px2.value);
+  px1L.textContent=x1; px2L.textContent=x2;
+  let svg='';
+  svg+=`<line x1="${sxD3(5)}" y1="0" x2="${sxD3(5)}" y2="320" stroke="#DD6FA0" stroke-width="3"/>`;
+  svg+=`<circle cx="${sxD3(x1)}" cy="${syD3(x2)}" r="6" fill="#0B3D2E"/>`;
+  distSvg3.innerHTML=svg;
+  const d = x1-5;
+  const cls = d>0?'verdict-good':(d<0?'verdict-bad':'');
+  const space = d>0?'positive halfspace':(d<0?'negative halfspace':'on the line');
+  distResult3.innerHTML=`d = (1)(${x1}) + (−5) = <strong>${d}</strong> → <span class="${cls}">${space}</span>`;
+}
+px1.addEventListener('input',drawDist3); px2.addEventListener('input',drawDist3); drawDist3();
+</script>
+</body>
+</html>
